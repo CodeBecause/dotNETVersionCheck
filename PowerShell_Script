@@ -1,0 +1,24 @@
+$servers = Get-Content -Path "Add text file here"
+
+foreach ($server in $servers) {
+    Write-Host "$server"
+    
+    $dotNetVersion = (Invoke-Command -ComputerName $server -ScriptBlock {
+        Get-ItemProperty -Path "insert reg path for NET Version" -Name Version
+    } -ErrorAction SilentlyContinue)
+    
+    if (-not $dotNetVersion -or $dotNetVersion -lt "version#") {
+        $missingServers += $server
+    }
+    
+    Write-Host "________________________________"
+}
+
+if ($missingServers.Count -gt 0) {
+    Write-Host "Servers are Missing the .Net Framework Version..."
+    foreach ($missingServer in $missingServers) {
+        Write-Host "$missingServer"
+    }
+} else {
+    Write-Host "All Servers are set with .Net Framework...Installed"
+}
